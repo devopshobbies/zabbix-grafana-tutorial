@@ -1,0 +1,11 @@
+sudo yum install epel-release
+sudo yum install python3
+sudo yum install ansible
+sudo vi /etc/ansible/hosts
+ansible all --list-hosts
+ssh root@your_server_ip
+ansible -m ping all   (failed)
+(control node):ssh-keygen
+copy pub key to remote server(zabbix server):
+(control node):ssh-copy-id root@192.168.1.235
+ansible -m ping all   (ping-pong)
