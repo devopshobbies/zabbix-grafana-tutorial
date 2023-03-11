@@ -1,0 +1,66 @@
+- include: tasks/check.yml
+
+- name: check if firewalld is running
+  ansible.builtin.command: systemctl status firewalld
+  register: firewalld_result
+  
+
+- name: set firewalld port for zabbix-agent.service
+  firewalld:
+    port: 10050/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+
+- name: yum install zabbix-agent
+  yum:
+    name:
+    - zabbix-agent
+
+- name: modify file /etc/zabbix/zabbix_agentd.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_agentd.conf'
+    state=present
+    backrefs=no
+    regexp='^Hostname'
+    line='#Hostname='
+  notify:
+    - restart zabbix-agent
+
+- name: modify file /etc/zabbix/zabbix_agentd.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_agentd.conf'
+    state=present
+    backrefs=no
+    regexp='^HostnameItem'
+    line='HostnameItem=system.hostname'
+  notify:
+    - restart zabbix-agent
+
+- name: modify file /etc/zabbix/zabbix_agentd.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_agentd.conf'
+    state=present
+    backrefs=no
+    regexp='^Server='
+    line='Server={{ vars.zabbix_server_ip }}'
+  notify:
+    - restart zabbix-agent
+
+- name: modify file /etc/zabbix/zabbix_agentd.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_agentd.conf'
+    state=present
+    backrefs=no
+    regexp='^ServerActive='
+    line='ServerActive={{ vars.zabbix_server_ip }}'
+  notify:
+    - restart zabbix-agent
+
+- name: enabled and start zabbix-agent
+  service:
+    name: zabbix-agent
+    state: started
+    enabled: yes
+

@@ -1,0 +1,15 @@
+- name: check OS distribution
+  fail: msg="Sorry. The playbook can only run on Centos7 or Centos8."
+  when: 
+    - ( ansible_distribution != 'CentOS' ) or
+      (( ansible_distribution_major_version != '8' ) and
+      ( ansible_distribution_major_version != '7' ))
+- name: include CentOS7 yml
+  include_vars:
+    file: centos7.yml
+  when: ansible_distribution_major_version == '7'
+- name: include CentOS8 yml
+  include_vars:
+    file: centos8.yml
+  when: ansible_distribution_major_version == '8'
+

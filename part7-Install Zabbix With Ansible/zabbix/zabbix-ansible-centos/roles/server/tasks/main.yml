@@ -1,0 +1,104 @@
+- include: tasks/check.yml
+
+- name: set firewall http.service
+  firewalld:
+    service: http
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: set firewall snmptrap.service
+  firewalld:
+    service: snmptrap
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: set firewall zabbix-server.service
+  firewalld:
+    port: 10051/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: yum install zabbix
+  yum:
+    name: "{{ yum_list }}"
+
+- name: modify file {{ mysql_server_file }}
+  lineinfile:
+    path: "{{ mysql_server_file }}"
+    regexp: ^innodb_file_per_table
+    insertafter: '^\[mysqld\]'
+    line: innodb_file_per_table = 1
+  notify: restart mysqld
+
+- name: enabled and start {{ mysql_name }}
+  service:
+    name: "{{ mysql_name }}"
+    state: started
+    enabled: yes
+
+- name: create database zabbix
+  mysql_db:
+    name: zabbix
+    encoding: utf8
+    collation: utf8_bin
+    state: present
+
+- name: create dbuser zabbix
+  mysql_user:
+    name: zabbix
+    password: "{{ vars.zabbix_mysql_password }}"
+    priv: 'zabbix.*:ALL,GRANT'
+    state: present
+  no_log: true
+
+
+- name: insert zabbix DB
+  shell: zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql zabbix -u root
+ 
+
+
+- name: modify httpd config centos7-only
+  lineinfile:
+    dest='/etc/httpd/conf.d/zabbix.conf'
+    state=present
+    backrefs=no
+    regexp='php_value date.timezone'
+    line='        php_value date.timezone Asia/Kolkata' 
+  notify:
+    - restart httpd
+  when: ansible_distribution_major_version == '7'
+
+- name: enabled and start httpd
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+
+- name: modify file /etc/zabbix/zabbix_server.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_server.conf'
+    state=present
+    backrefs=no
+    regexp='DBPassword=$'
+    line="DBPassword={{ vars.zabbix_mysql_password }}"
+  no_log: true
+  notify:
+    - restart zabbix-server
+
+- name: modify file /etc/zabbix/web/zabbix.conf.php
+  template: >
+    src=zabbix.conf.php.j2
+    dest=/etc/zabbix/web/zabbix.conf.php
+    owner=apache
+    group=apache
+    mode=0644
+
+- name: enabled and start zabbix-server
+  service:
+    name: zabbix-server
+    state: started
+    enabled: yes
+

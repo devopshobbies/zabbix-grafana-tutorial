@@ -1,0 +1,12 @@
+yum_list:
+  - httpd
+  - mysql-server
+  - zabbix-server-mysql
+  - zabbix-web-mysql
+  - zabbix-apache-conf
+  - zabbix-web
+  - zabbix-get
+  - python3-PyMySQL
+mysql_server_file: /etc/my.cnf.d/mysql-server.cnf
+mysql_name: mysqld
+

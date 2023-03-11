@@ -1,0 +1,10 @@
+- name: setup server
+  hosts: servers
+  roles:
+   - common
+   - server
+- name: setup agent
+  hosts: agents
+  roles:
+   - common
+   - agent
