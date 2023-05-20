@@ -1,0 +1,9 @@
+
+- name: restart mariadb
+  service: name=mariadb state=restarted enabled=yes
+
+- name: restart mysqld
+  service: name=mysqld state=restarted enabled=yes
+
+- name: restart zabbix-proxy
+  service: name=zabbix-proxy state=restarted enabled=yes

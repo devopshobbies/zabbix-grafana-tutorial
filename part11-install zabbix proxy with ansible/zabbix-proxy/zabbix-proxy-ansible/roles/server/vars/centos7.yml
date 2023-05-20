@@ -1,0 +1,11 @@
+yum_list:
+  - mariadb-server
+  - MySQL-python
+  - zabbix-get
+  - zabbix-agent
+  - zabbix-sender
+  - zabbix-proxy-mysql
+  - zabbix-sql-scripts
+
+mysql_server_file: /etc/my.cnf.d/server.cnf
+mysql_name: mariadb

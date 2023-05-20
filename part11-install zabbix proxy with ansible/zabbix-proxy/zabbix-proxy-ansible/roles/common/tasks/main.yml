@@ -1,0 +1,16 @@
+- include: tasks/check.yml
+
+- name: disable selinux
+  selinux:
+   state: disabled
+
+- name: set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Install Zabbix Repo
+  yum:
+    name: "{{repo_url}}"
+    state: present
+    disable_gpg_check: True
+

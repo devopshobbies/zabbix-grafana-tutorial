@@ -1,0 +1,8 @@
+---
+
+- name: check OS distribution
+  ansible.builtin.fail:
+   msg: "Sorry  This playbook can only run on Centos7 or Centos8."
+  when:  ( ansible_distribution != 'CentOS' ) or  (( ansible_distribution_major_version != '8' ) and ( ansible_distribution_major_version != '7' ))
+
+

@@ -1,0 +1,117 @@
+- include: tasks/check.yml
+
+
+- name: set firewall snmptrap.service
+  firewalld:
+    service: snmptrap
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: set firewall zabbix-proxy.service
+  firewalld:
+    port: 10051/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: yum install zabbix
+  yum:
+    name: "{{ yum_list }}"
+
+- name: modify file {{ mysql_server_file }}
+  lineinfile:
+    path: "{{ mysql_server_file }}"
+    regexp: ^innodb_file_per_table
+    insertafter: '^\[mysqld\]'
+    line: innodb_file_per_table = 1
+  notify: restart mysqld
+
+- name: enabled and start {{ mysql_name }}
+  service:
+    name: "{{ mysql_name }}"
+    state: started
+    enabled: yes
+
+- name: create database zabbix-porxy
+  mysql_db:
+    name: zabbix-proxy
+    encoding: utf8
+    collation: utf8_bin
+    state: present
+
+- name: create dbuser zabbix-proxy
+  mysql_user:
+    name: zabbix-proxy
+    password: 135792468
+    priv: 'zabbix-proxy.*:ALL,GRANT'
+    state: present
+
+
+- name: modify file /etc/zabbix/zabbix_proxy.conf ser db password
+  lineinfile:
+    dest='/etc/zabbix/zabbix_proxy.conf'
+    state=present
+    backrefs=no
+    regexp='DBPassword=$'
+    line="DBPassword= 135792468"
+
+- name: modify file /etc/zabbix/zabbix_proxy.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_proxy.conf'
+    state=present
+    backrefs=no
+    regexp='ProxyMode=$'
+    line="ProxyMode=0"
+
+- name: modify file /etc/zabbix/zabbix_proxy.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_proxy.conf'
+    state=present
+    backrefs=no
+    regexp='Server=$'
+    line="Server=192.168.1.199"
+
+- name: modify file /etc/zabbix/zabbix_proxy.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_proxy.conf'
+    state=present
+    backrefs=no
+    regexp='Hostname=$'
+    line="Hostname=zabbix-proxy"
+
+- name: modify file /etc/zabbix/zabbix_proxy.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_proxy.conf'
+    state=present
+    backrefs=no
+    regexp='DBHost=$'
+    line="DBHost=localhost"
+
+- name: modify file /etc/zabbix/zabbix_proxy.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_proxy.conf'
+    state=present
+    backrefs=no
+    regexp='DBName=$'
+    line="DBName=zabbix-proxy"
+
+- name: modify file /etc/zabbix/zabbix_proxy.conf
+  lineinfile:
+    dest='/etc/zabbix/zabbix_proxy.conf'
+    state=present
+    backrefs=no
+    regexp='DBUser=$'
+    line="DBUser=zabbix-proxy"
+  notify:
+    - restart zabbix-proxy
+
+
+
+
+- name: enabled and start zabbix-proxy
+  service:
+    name: zabbix-proxy
+    state: started
+    enabled: yes
+

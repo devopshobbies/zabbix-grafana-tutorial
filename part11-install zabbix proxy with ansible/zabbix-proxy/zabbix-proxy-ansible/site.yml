@@ -1,0 +1,10 @@
+- name: setup proxy
+  hosts: zabbix-proxy
+  roles:
+   - common
+   - server
+- name: setup agent
+  hosts: agents
+  roles:
+   - common
+   - agent
