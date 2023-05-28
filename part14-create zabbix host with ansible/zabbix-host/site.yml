@@ -1,0 +1,4 @@
+- name: setup zabbix-host
+  hosts: zabbixserver
+  roles:
+   - server

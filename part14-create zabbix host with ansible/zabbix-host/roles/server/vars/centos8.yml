@@ -1,0 +1,9 @@
+yum_list:
+  - mysql-server
+  - zabbix-get
+  - python3-PyMySQL
+  - zabbix-proxy-mysql
+  - zabbix-sql-scripts
+mysql_server_file: /etc/my.cnf.d/mysql-server.cnf
+mysql_name: mysqld
+
