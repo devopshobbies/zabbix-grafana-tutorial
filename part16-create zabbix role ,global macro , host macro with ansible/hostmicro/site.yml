@@ -1,0 +1,4 @@
+- name: setup zabbix-hostmacro
+  hosts: zabbixserver
+  roles:
+   - server

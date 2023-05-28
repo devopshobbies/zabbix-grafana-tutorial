@@ -1,0 +1,4 @@
+- name: setup zabbix-globalmacro
+  hosts: zabbixserver
+  roles:
+   - server
