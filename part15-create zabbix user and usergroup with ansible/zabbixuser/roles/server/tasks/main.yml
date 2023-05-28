@@ -1,0 +1,52 @@
+- name: Set connection specific variables
+  set_fact:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: 80
+    ansible_httpapi_use_ssl: false
+    ansible_httpapi_validate_certs: false
+    ansible_zabbix_url_path: 'zabbix'  # If Zabbix WebUI runs on non-default (zabbix) path ,e.g. http://<FQDN>/zabbixeu
+
+# If you want to use Username and Password to be authenticated by Zabbix Server
+- name: Set credentials to access Zabbix Server API
+  set_fact:
+    ansible_user: Admin
+    ansible_httpapi_pass: zabbix
+
+- name: create a new zabbix user.
+  community.zabbix.zabbix_user:
+    username: ajoodani
+    name: user name
+    usrgrps:
+      - Guests
+      - Disabled
+    passwd: amirmahdi139914587
+    lang: en_GB
+    theme: blue-theme
+    autologin: no
+    autologout: '0'
+    refresh: '30'
+    user_medias:
+      - mediatype: Email
+        sendto: example@example.com
+        period: 1-7,00:00-24:00
+        severity:
+          not_classified: no
+          information: yes
+          warning: yes
+          average: yes
+          high: yes
+          disaster: yes
+        active: no
+    role_name: Admin role
+    state: present
+
+#- name: delete existing zabbix user.
+#  community.zabbix.zabbix_user:
+#    username: ajoodani
+#    usrgrps:
+#      - Guests
+#    passwd: password
+#    user_medias:
+#      - sendto: example@example.com
+#    state: absent

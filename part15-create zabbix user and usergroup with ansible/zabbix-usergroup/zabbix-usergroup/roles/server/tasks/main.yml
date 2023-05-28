@@ -1,0 +1,51 @@
+- name: Set connection specific variables
+  set_fact:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: 80
+    ansible_httpapi_use_ssl: false
+    ansible_httpapi_validate_certs: false
+    ansible_zabbix_url_path: 'zabbix'  # If Zabbix WebUI runs on non-default (zabbix) path ,e.g. http://<FQDN>/zabbixeu
+
+# If you want to use Username and Password to be authenticated by Zabbix Server
+- name: Set credentials to access Zabbix Server API
+  set_fact:
+    ansible_user: Admin
+    ansible_httpapi_pass: zabbix
+
+# Base create user group example
+- name: Create user group
+  community.zabbix.zabbix_usergroup:
+    name: ACME
+    state: present
+
+# Base create user group with disabled gui access
+- name: Create user group with disabled gui access
+  community.zabbix.zabbix_usergroup:
+    name: ACME
+    gui_access: disable
+
+# Base create user group with permissions
+- name: Create user group with permissions
+  community.zabbix.zabbix_usergroup:
+    name: ACME
+    rights:
+        - host_group: ansible
+          permission: read-write
+        - host_group: windows-server
+          permission: read-only
+    state: present
+
+# Base create user group with tag permissions
+- name: Create user group with tag permissions
+  community.zabbix.zabbix_usergroup:
+    name: ACME
+    tag_filters:
+        - host_group: ansible
+          tag: Application
+          value: python
+        - host_group: LinuxServer
+          tag: Service
+          value: JIRA
+    state: present
+
