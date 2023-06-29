@@ -1,0 +1,4 @@
+- name: setup zabbix-housekepping
+  hosts: zabbixserver
+  roles:
+   - server

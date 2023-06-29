@@ -1,0 +1,4 @@
+- name: setup zabbix-maintenance
+  hosts: zabbixserver
+  roles:
+   - server
