@@ -1,0 +1,57 @@
+Step 1: Update Ubuntu
+-------------------------------------
+sudo apt update
+sudo apt -y upgrade
+
+Step 2: Install MariaDB database server
+-------------------------------------
+sudo apt update
+sudo apt install mariadb-server
+sudo mysql_secure_installation
+$ sudo mysql -u root -p
+CREATE DATABASE glpi;
+CREATE USER 'glpi'@'localhost' IDENTIFIED BY 'StrongDBPassword';
+GRANT ALL PRIVILEGES ON glpi.* TO 'glpi'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+Step 3: Install PHP and Apache
+------------------------------------
+sudo apt -y install php php-{curl,zip,bz2,gd,imagick,intl,apcu,memcache,imap,mysql,cas,ldap,tidy,pear,xmlrpc,pspell,mbstring,json,iconv,xml,gd,xsl}
+sudo apt -y install apache2 libapache2-mod-php
+$ sudo vim /etc/php/*/apache2/php.ini
+session.cookie_httponly = on
+
+Step 4: Download and Install GLPI
+-------------------------------------
+sudo apt-get -y install wget curl
+
+wget https://github.com/glpi-project/glpi/releases/download/9.5.7/glpi-9.5.7.tgz
+tar xvf glpi-$VER.tgz
+sudo mv glpi /var/www/html/
+sudo chown -R www-data:www-data /var/www/html/
+
+Step 5: Finish GLPI installation
+-----------------------------------
+Visit your server IP or hostname URL on /glpi. If it is your local machine, you can use: http://127.0.0.1/glpi/install/install.php
+
+Default logins / passwords are:
+
+glpi/glpi for the administrator account
+tech/tech for the technician account
+normal/normal for the normal account
+post-only/postonly for the postonly account
+
+
+
+
+
+
+
+
+
+
+
+
+
+/tr_events.php?triggerid={TRIGGER.ID}&eventid={EVENT.ID}
